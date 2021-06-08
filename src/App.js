@@ -1,23 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
+
+import { BrowserRouter as Router,
+  Route,
+  Switch } from 'react-router-dom';
+
+// components
+import HomeScreen from './screens/HomeScreen';
+import ProjectScreen from './screens/ProjectScreen';
+import PageNotFound from './screens/PageNotFoundScreen';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Switch>
+          <Route path="/new" component={ProjectScreen}/>
+          <Route path="/edit">
+            <ProjectScreen />
+          </Route>
+          <Route exact path="/" component={HomeScreen}/>
+          <Route path='*' component={PageNotFound} />
+        </Switch>
+      </Router>
     </div>
   );
 }

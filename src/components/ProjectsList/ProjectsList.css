@@ -1,0 +1,24 @@
+.project-list {
+	background-color: #FFF;
+	margin-top: 3em;
+}
+
+table th {
+	font-weight: 500;
+	box-shadow: inset 0px -1px 0px #D9D9D9;
+}
+
+table td {
+	font-weight: 400;
+}
+
+.project-item {
+	box-shadow: inset 0px -1px 0px #D9D9D9;
+	min-height: 200px;
+}
+
+@media only screen and (max-width: 768px) {
+	.project-list {
+		margin-top: 1em;
+	}
+}

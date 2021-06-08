@@ -1,0 +1,47 @@
+header {
+	background-color: #fff;
+}
+
+header .logo-div {
+	height: 3em;
+	border-bottom: 1px #D9D9D9 solid;
+	padding:  0 1em;
+	align-items: center;
+}
+
+header .title-div {
+	height: 3em;
+	box-shadow: inset 0px -1px 0px #D9D9D9;
+	padding:  0 1em;
+	align-items: center;
+}
+
+header .title-div h1 {
+	font-size: large;
+	font-weight: 600;
+}
+
+.btn {
+	padding: 8px;
+	color: white;
+	background-color: #F5222D;
+	border-radius: 4px;
+}
+
+@media only screen and (min-width: 768px) {
+	header .logo-div, header .title-div {
+		height: 5em;
+	}
+	
+	.title-div {
+		padding:  0 2em;
+	}
+
+	header .title-div h1{
+		font-size: 1.5em;
+	}
+
+	.btn {
+		padding: 8px 16px;
+	}
+}
