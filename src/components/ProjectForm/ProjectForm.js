@@ -1,7 +1,8 @@
 import './ProjectForm.css';
 import React, { useState, useEffect } from 'react';
-import { Grid, Modal } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
+import ModalBox from '../Modal/ModalBox';
+
 import { useHistory } from 'react-router-dom';
 // redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,40 +10,16 @@ import { addProject, editProject } from '../../features/project/projectSlice';
 // validation library
 import * as yup from 'yup';
 
-const useStyles = makeStyles( theme => ({
-	modal: {
-			position: 'absolute',
-			width: '20vw',
-			height: '20vh',
-			backgroundColor: 'white',
-			border: '2px solid rgba(40,40,40,0.4)',
-			borderRadius: '5px',
-			shadow: '2px 2px 2px rgba(50,50,50,0.4)',
-			top:'50%',
-			left:'50%',
-			transform: 'translate(-50%, -50%)',
-			display: 'flex',
-			flexDirection: 'column'
-	},
-	title: {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: '1.5em 4px',
-		fontWeight: '600'
-	},
-	btn: {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		alignSelf: 'center',
-		backgroundColor: '#D9D9D9',
-		borderRadius: '5px',
-		border: '1px solid rgba(0,0,0,0.2)',
-		padding: '4px 8px',
-		width: '60%'
-	}
-}));
+//constants
+import { 
+	PROJECT_NAME_LABEL, PROJECT_NAME_PLACEHOLDER,
+	PROJECT_DESCRIPTION_LABEL, PROJECT_DESCRIPTION_PLACEHOLDER,
+	PROJECT_MANAGER_LABEL,
+	PROJECT_ASSIGNEDTO_LABEL,
+	PROJECT_STATUS_LABEL,
+	PROJECT_CREATED_TITLE, PROJECT_CREATED_MESSAGE,
+	PROJECT_EDITED_TITLE, PROJECT_EDITED_MESSAGE,
+} from '../../constants';
 
 const formStyles = {
 	form: {'background-color':'#FFF','box-shadow': '0px 2px 4px rgba(0, 0, 0, 0.15)','border-radius': '4px'},
@@ -50,17 +27,14 @@ const formStyles = {
 	submit: {'color':'white','background-color': '#F5222D', 'border-radius':'4px',padding: '8px 16px',}
 }
 
-
 const ProjectForm = ({project}) => {
 	const newId = useSelector(state => state.project.projects.length);
 	const dispatch = useDispatch();
 	const [isNew, setIsNew] = useState(true);
 	const [validationError, setError] = useState();
-	const [modalOpen, setModalOpen] = useState(false);
+	const [modal, setModal] = useState(null);
 
 	const history = useHistory();
-	
-	const modalStyles = useStyles();
 
 	//validation
 	const projectSchema = yup.object().shape({
@@ -87,11 +61,9 @@ const ProjectForm = ({project}) => {
 		projectSchema.validate(formProject)
 			.then(valid => {
 				if(isNew) {
-					dispatch(addProject(formProject))
-					setModalOpen(true);
+					setModal(<ModalBox title={PROJECT_CREATED_TITLE} message={PROJECT_CREATED_MESSAGE} acceptFn={() => dispatch(addProject(formProject))} setModal={setModal} history={history}/>)
 				} else {
-					dispatch(editProject(formProject));
-					setModalOpen(true);
+					setModal(<ModalBox title={PROJECT_EDITED_TITLE} message={PROJECT_EDITED_MESSAGE} acceptFn={() => dispatch(editProject(formProject))} setModal={setModal} history={history}/>)
 				}
 				
 			})
@@ -99,12 +71,6 @@ const ProjectForm = ({project}) => {
 				console.log(err)
 				setError(err);
 			});
-	}
-
-	//modal open-close
-	const modalToggle = () => {
-		setModalOpen(!modalOpen)
-		history.goBack();
 	}
 
 	useEffect(() => {
@@ -129,41 +95,40 @@ const ProjectForm = ({project}) => {
 			: null }
 
 			<div>
-			<label className="font-medium" htmlFor="name">Project Name</label>
+			<label className="font-medium" htmlFor="name">{PROJECT_NAME_LABEL}</label>
 			<input 
 				className="w-full mt-1 mb-4 md:mb-4 rounded-md shadow-sm" 
 				style={formStyles.input} 
 				id="name" 
 				name="name" 
 				type='text' 
-				placeholder='Proyect Name' 
+				placeholder={PROJECT_NAME_PLACEHOLDER} 
 				defaultValue={project.name} required/>
 				
 			</div>
 			
 			
 			<div>
-				<label className="font-medium mt-4" htmlFor="description">Description</label> 
+				<label className="font-medium mt-4" htmlFor="description">{PROJECT_DESCRIPTION_LABEL}</label> 
 				<input 
 					className="w-full mt-1 mb-4 md:mb-4 rounded-md shadow-sm" 
 					style={formStyles.input} 
 					id="description" 
 					name="description" 
 					type='text' 
-					placeholder='Project description' 
+					placeholder={PROJECT_DESCRIPTION_PLACEHOLDER} 
 					defaultValue={project.description} required/>
 					
 			</div>
 				
 				
 				<div>
-			<label className="font-medium mt-4" htmlFor="manager">Project Manager</label>
+			<label className="font-medium mt-4" htmlFor="manager">{PROJECT_MANAGER_LABEL}</label>
 			<select 
 				className="w-full mt-1 mb-4 md:mb-4 rounded-md shadow-sm" 
 				style={formStyles.input} 
 				id="manager" 
 				name="manager" 
-				placeholder="Select a person" 				
 				defaultValue={project.project_manager} required>
 
 					<option value="Fulanito deTal">Fulanito deTal</option>
@@ -175,13 +140,12 @@ const ProjectForm = ({project}) => {
 			
 			
 			<div>
-			<label className="font-medium mt-4" htmlFor="assignedTo">Assigned To</label>
+			<label className="font-medium mt-4" htmlFor="assignedTo">{PROJECT_ASSIGNEDTO_LABEL}</label>
 			<select 
 				className="w-full mt-1 mb-4 md:mb-4 rounded-md shadow-sm" 
 				style={formStyles.input} 
 				id="assignedTo"
 				name="assignedTo" 
-				placeholder="Select a person" 
 				defaultValue={project.assigned_to} required>
 
 				<option value='Ignacio Truffa'>Ignacio Truffa</option>
@@ -193,12 +157,11 @@ const ProjectForm = ({project}) => {
 			
 			
 			<div>
-			<label className="font-medium mt-4" htmlFor="status">Status</label>
+			<label className="font-medium mt-4" htmlFor="status">{PROJECT_STATUS_LABEL}</label>
 			<select 
 				className="w-full mt-1 mb-4 md:mb-4 rounded-md shadow-sm" 
 				style={formStyles.input} 
 				id="status" name="status" 
-				
 				defaultValue={project.status}>
 
 					<option value="Enabled">Enabled</option>
@@ -219,17 +182,8 @@ const ProjectForm = ({project}) => {
 			
 			</form>
 
-			<Modal
-			  open={modalOpen}
-			  onClose={modalToggle}
-			>
-				<div className={modalStyles.modal} >
-			  	<h3 className={modalStyles.title}>Project { isNew ? 'Created' : 'Updated'} </h3>
-			  	<button className={modalStyles.btn} onClick={modalToggle}>OK</button>
-			  </div>
-			</Modal>
-
-
+			{modal}
+			
 		</Grid>
 		</>
 		)

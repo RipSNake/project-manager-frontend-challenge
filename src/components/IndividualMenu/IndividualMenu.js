@@ -9,10 +9,13 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 
+import ModalBox from '../Modal/ModalBox';
+
 export const IndividualMenu = ({item}) => {
 	const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 	const dispatch = useDispatch();
+	const [modal, setModal] = useState(null);
 
 	const handleClick = (e) => {
 		setAnchorEl(e.currentTarget);
@@ -23,7 +26,13 @@ export const IndividualMenu = ({item}) => {
 	}
 
 	const handleDelete = () => {
-		dispatch(deleteProject(item));
+		setModal(<ModalBox 
+			title={'Eliminar Proyecto'} 
+			message={'Quiere eliminar el Proyecto?'} 
+			acceptFn={() => dispatch(deleteProject(item))} 
+			cancelFn={() => false} 
+			setModal={setModal}
+		/>)
 		handleClose();
 	}
 
@@ -48,8 +57,8 @@ export const IndividualMenu = ({item}) => {
 			<MenuItem onClick={handleDelete}>
 				<DeleteOutlineIcon />Delete
 			</MenuItem>
-			
 		</Menu>
+		{modal}
 		</>
 	)
 }
